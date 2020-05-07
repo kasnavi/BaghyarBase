@@ -13,4 +13,4 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Customer
         fields = ('id', 'url', 'user', 'phoneNumber', 'isBlocked', 'isActivated')
-        depth = 0
+        depth = 1
