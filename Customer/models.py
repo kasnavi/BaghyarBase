@@ -13,13 +13,13 @@ class Log(models.Model):
 
 
 class Contract(models.Model):
-    startDate = models.DateField()
-    dueDate = models.DateField()
+    start_date = models.DateField()
+    due_date = models.DateField()
     price = models.DateField()
-    broughtDate = models.DateField()
+    brought_date = models.DateField()
 
     def __str__(self):
-        return self.dueDate
+        return self.due_date
     pass
 
 
@@ -47,7 +47,7 @@ class Sensor(models.Model):
 class Spout(models.Model):
     name = models.CharField('spout name', max_length=100)
     land = models.ForeignKey(Land, on_delete=models.CASCADE)
-    isOn = models.BooleanField(default=False)
+    is_on = models.BooleanField(default=False)
 
     def __str__(self):
         return "spout" + self.name + "_" + self.land.name
@@ -55,7 +55,7 @@ class Spout(models.Model):
 
 class SpoutSensor(models.Model):
     spout = models.ForeignKey(Spout, on_delete=models.CASCADE)
-    isOn = models.BooleanField(default=False)
+    is_on = models.BooleanField(default=False)
 
     def __str__(self):
         return "spout sensor " + self.spout.name + "_" + self.spout.land.name
@@ -63,12 +63,12 @@ class SpoutSensor(models.Model):
 
 class Customer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    phoneNumber = models.CharField('phone number', max_length=12)
-    isBlocked = models.BooleanField('is blocked', default=False)
-    isActivated = models.BooleanField('is activated', default=True)
+    phone_number = models.CharField('phone number', max_length=12)
+    is_blocked = models.BooleanField('is blocked', default=False)
+    is_activated = models.BooleanField('is activated', default=True)
     lands = models.ManyToManyField(Land)
 
     def __str__(self):
-        return self.user.username + "_" + self.phoneNumber
+        return self.user.username + "_" + self.phone_number
     pass
 
