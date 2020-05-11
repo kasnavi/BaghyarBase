@@ -23,11 +23,21 @@ class Contract(models.Model):
     pass
 
 
+class Customer(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    phoneNumber = models.CharField('phone number', max_length=12)
+    isBlocked = models.BooleanField('is blocked', default=False)
+    isActivated = models.BooleanField('is activated', default=True)
+
+    def __str__(self):
+        return self.user.username + "_" + self.phoneNumber
+    pass
+
+
 class Land(models.Model):
     name = models.CharField('land name', max_length=100)
     location = models.CharField('location', max_length=100)
-    users = models.ManyToManyField(User)
-    contract = models.ForeignKey(Contract, on_delete=models.CASCADE)
+    customers = models.ManyToManyField(Customer, related_name='lands')
 
     def __str__(self):
         return self.name + "_" + self.location
@@ -47,7 +57,7 @@ class Sensor(models.Model):
 class Spout(models.Model):
     name = models.CharField('spout name', max_length=100)
     land = models.ForeignKey(Land, on_delete=models.CASCADE)
-    is_on = models.BooleanField(default=False)
+    isOn = models.BooleanField(default=False)
 
     def __str__(self):
         return "spout" + self.name + "_" + self.land.name
@@ -55,20 +65,7 @@ class Spout(models.Model):
 
 class SpoutSensor(models.Model):
     spout = models.ForeignKey(Spout, on_delete=models.CASCADE)
-    is_on = models.BooleanField(default=False)
+    isOn = models.BooleanField(default=False)
 
     def __str__(self):
         return "spout sensor " + self.spout.name + "_" + self.spout.land.name
-
-
-class Customer(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    phone_number = models.CharField('phone number', max_length=12)
-    is_blocked = models.BooleanField('is blocked', default=False)
-    is_activated = models.BooleanField('is activated', default=True)
-    lands = models.ManyToManyField(Land)
-
-    def __str__(self):
-        return self.user.username + "_" + self.phone_number
-    pass
-
