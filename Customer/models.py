@@ -5,10 +5,11 @@ from django.contrib.auth.models import User
 class Log(models.Model):
     type = models.CharField('type', max_length=100)
     description = models.CharField('description', max_length=500)
-    criticality = models.IntegerField()
+    criticalLevel = models.IntegerField()
 
     def __str__(self):
-        return self.type + "\n " + str(self.criticality)
+        return self.type + "\n " + str(self.criticalLevel)
+
     pass
 
 
@@ -20,6 +21,7 @@ class Contract(models.Model):
 
     def __str__(self):
         return self.due_date
+
     pass
 
 
@@ -31,6 +33,7 @@ class Customer(models.Model):
 
     def __str__(self):
         return self.user.username + "_" + self.phoneNumber
+
     pass
 
 
@@ -41,6 +44,7 @@ class Land(models.Model):
 
     def __str__(self):
         return self.name + "_" + self.location
+
     pass
 
 
@@ -56,7 +60,7 @@ class Sensor(models.Model):
 
 class Spout(models.Model):
     name = models.CharField('spout name', max_length=100)
-    land = models.ForeignKey(Land, on_delete=models.CASCADE)
+    land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='spouts')
     isOn = models.BooleanField(default=False)
 
     def __str__(self):
@@ -64,8 +68,39 @@ class Spout(models.Model):
 
 
 class SpoutSensor(models.Model):
-    spout = models.ForeignKey(Spout, on_delete=models.CASCADE)
+    spout = models.OneToOneField(Spout, on_delete=models.CASCADE, related_name='spoutSensor')
     isOn = models.BooleanField(default=False)
 
     def __str__(self):
         return "spout sensor " + self.spout.name + "_" + self.spout.land.name
+
+
+class Program(models.Model):
+    name = models.CharField(max_length=50, blank=True)
+    spouts = models.ManyToManyField(Spout, related_name='programs')
+    startTimeDate = models.DateTimeField()
+    finishTimeDate = models.DateTimeField()
+
+    def __str__(self):
+        spout_list = ""
+        for spout in self.spouts.all():
+            spout_list += spout.name + ",_"
+
+        return self.name \
+               + "_Program:_land:_" \
+               + str(self.spouts.first().land) \
+               + "__spouts_" + spout_list \
+               + "_" + str(self.startTimeDate) \
+               + str(self.finishTimeDate)
+
+
+class LandDailyTempRecord(models.Model):
+    land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='tempRecord')
+    day = models.DateField(auto_now=True, auto_now_add=True)
+    maxTemp = models.CharField(max_length=20)
+    minTemp = models.CharField(max_length=20)
+
+    def __str__(self):
+        return "tempRecord: " + self.land.name + " " + str(self.day) \
+            + "maxTemp: " + str(self.maxTemp) + "minTemp: " + str(self.minTemp)
+
