@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class Log(models.Model):
@@ -49,13 +50,20 @@ class Land(models.Model):
 
 
 class Sensor(models.Model):
-    name = models.CharField('sensor name', max_length=100)
-    type = models.CharField('sensor type', max_length=100)
-    land = models.ForeignKey(Land, on_delete=models.CASCADE)
-    value = models.CharField('value', max_length=100)
+    type = models.CharField('sensor_type', max_length=100, default='temp')
+    value = models.CharField('value', max_length=100, default=0)
+    land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='sensors')
+    created = models.DateTimeField(editable=False, default=timezone.now())
+    modified = models.DateTimeField(default=timezone.now())
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(Sensor, self).save(*args, **kwargs)
 
     def __str__(self):
-        return "sensor" + self.type + "_" + self.name + "_" + self.land.name
+        return "sensor" + self.type + "_" + self.value + "_" + self.land.name
 
 
 class Spout(models.Model):
@@ -96,7 +104,7 @@ class Program(models.Model):
 
 class LandDailyTempRecord(models.Model):
     land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='tempRecord')
-    day = models.DateField(auto_now=True, auto_now_add=True)
+    day = models.DateField()#auto_now=True, auto_now_add=True)
     maxTemp = models.CharField(max_length=20)
     minTemp = models.CharField(max_length=20)
 

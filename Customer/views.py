@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from .models import Customer, Land, Spout, SpoutSensor, Program, LandDailyTempRecord
+from .models import Customer, Land, Spout, SpoutSensor, Program, LandDailyTempRecord, \
+    Sensor
 from .serializers import CustomerSerializer, UserSerializer, LandSerializer,\
     SpoutSerializer, SpoutSensorSerializer, ProgramSerializer,\
-    LandDailyTempRecordSerializer
+    LandDailyTempRecordSerializer, SensorSerializer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from datetime import date
@@ -43,6 +44,10 @@ class LandDailyTempRecordView(viewsets.ModelViewSet):
     queryset = LandDailyTempRecord.objects.all()
     serializer_class = LandDailyTempRecordSerializer
 
+
+class SensorView(viewsets.ModelViewSet):
+    queryset = Sensor.objects.all()
+    serializer_class = SensorSerializer
 
 # def ReportTemp(request, device_id):
 #     temp = request.Get['temp']

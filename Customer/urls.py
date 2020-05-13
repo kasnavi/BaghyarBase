@@ -11,6 +11,7 @@ router.register('spout', views.SpoutView)
 router.register('spoutSensor', views.SpoutSensorView)
 router.register('program', views.ProgramView)
 router.register('landDailyTempRecord', views.LandDailyTempRecordView)
+router.register('sensor', views.SensorView)
 
 urlpatterns = [
     path('api/', include(router.urls)),
