@@ -67,7 +67,19 @@ class Sensor(models.Model):
 
 
 class Spout(models.Model):
+    # SPOUT1 = 1
+    # SPOUT2 = 2
+    # SPOUT3 = 3
+    # SPOUT4 = 4
+    # NUMBER_CHOICES = (
+    #     (SPOUT1, 'spout1'),
+    #     (SPOUT2, 'spout2'),
+    #     (SPOUT3, 'spout3'),
+    #     (SPOUT4, 'spout4'),
+    # )
     name = models.CharField('spout name', max_length=100)
+    # number = models.IntegerChoices(choices=NUMBER_CHOICES)
+    number = models.IntegerField()
     land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='spouts')
     isOn = models.BooleanField(default=False)
 

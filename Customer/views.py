@@ -49,7 +49,7 @@ class SensorView(viewsets.ModelViewSet):
     queryset = Sensor.objects.all()
     serializer_class = SensorSerializer
 
-# def ReportTemp(request, device_id):
+# def reportTemp(request, device_id):
 #     temp = request.Get['temp']
 #     today = date.today()
 #     tempRecord = LandDailyTempRecord.objects.filter(land__id=device_id, day=today)
@@ -65,3 +65,34 @@ class SensorView(viewsets.ModelViewSet):
 #
 #     return HttpResponse("")
 
+
+def check_land(request, land_id, program_id):
+    # land_id
+    # program_id
+    # response: {“d”:{“sch”:1,“exp”:0,“del_sch”:0},“c”:null}
+    # {"d" {"sch":"0/1 edited or added", "exp": "one of outputs has changed" \
+    # , "del_sch": "a program has deleted"} "c":"error code / null"}
+    return HttpResponse("")
+
+
+def expected_output(request, land_id):
+    # land_id
+    # response: {“d”:{“o”:“111”},“c”:null}
+    # {"d":{"o":"1/0 1/0 1/0 spouts are on/off"}, "c":"error"}
+    return HttpResponse("")
+
+
+def ask_schedule(request, land_id, program_id):
+    # land_id
+    # program_id
+    # {“d”:{“e”: 1,“l”:“TIMESTAMP”,“s”:[{“id”:7,”st”:”2:6:19:50:02:30”,”o”:”001”}]},“c”:null}
+    # {"d":{"e": "has continue", "l":"next_ip", "s":[{"id":"program_id","st": \
+    # "per_weeK[2,1,0]:day_of_week[1-7]:hour:minute:hourly_duration:minute_duration" \
+    # ,"o":"1/0 1/0 1/0 spouts are on/off"}, "c":"error"}
+    return HttpResponse("")
+
+
+def get_device_serial(request, device_id):
+    # device_id
+    # return device land id
+    return HttpResponse("")
