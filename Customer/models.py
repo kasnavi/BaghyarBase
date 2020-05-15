@@ -98,6 +98,7 @@ class SpoutSensor(models.Model):
 class Program(models.Model):
     name = models.CharField(max_length=50, blank=True)
     spouts = models.ManyToManyField(Spout, related_name='programs')
+    land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='programs')
     startTimeDate = models.DateTimeField()
     finishTimeDate = models.DateTimeField()
 
@@ -124,3 +125,7 @@ class LandDailyTempRecord(models.Model):
         return "tempRecord: " + self.land.name + " " + str(self.day) \
             + "maxTemp: " + str(self.maxTemp) + "minTemp: " + str(self.minTemp)
 
+
+class Device(models.Model):
+    serial = models.IntegerField()
+    land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='device')

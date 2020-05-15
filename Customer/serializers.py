@@ -1,5 +1,5 @@
 from .models import Customer, Land, Spout, SpoutSensor, Program, LandDailyTempRecord, \
-    Sensor
+    Sensor, Device
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.db import models
@@ -82,7 +82,8 @@ class CustomerSerializer(serializers.HyperlinkedModelSerializer):
 class ProgramSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Program
-        fields = ('id', 'name', 'startTimeDate', 'finishTimeDate', 'url')
+        land = LandSerializer(many=False)
+        fields = ('id', 'land', 'name', 'startTimeDate', 'finishTimeDate', 'url')
 
 
 class LandDailyTempRecordSerializer(serializers.HyperlinkedModelSerializer):
@@ -91,3 +92,12 @@ class LandDailyTempRecordSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = LandDailyTempRecord
         fields = ('id', 'land', 'day', 'maxTemp', 'minTemp', 'url')
+
+
+class DeviceSerializer(serializers.HyperlinkedModelSerializer):
+    land = LandSerializer(many=False)
+
+    class Meta:
+        model = Device
+        fields = ('id', 'serial', 'land', 'url')
+

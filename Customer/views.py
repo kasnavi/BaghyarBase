@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from .models import Customer, Land, Spout, SpoutSensor, Program, LandDailyTempRecord, \
-    Sensor
+    Sensor, Device
 from .serializers import CustomerSerializer, UserSerializer, LandSerializer,\
     SpoutSerializer, SpoutSensorSerializer, ProgramSerializer,\
-    LandDailyTempRecordSerializer, SensorSerializer
+    LandDailyTempRecordSerializer, SensorSerializer, DeviceSerializer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from datetime import date
@@ -49,6 +49,12 @@ class SensorView(viewsets.ModelViewSet):
     queryset = Sensor.objects.all()
     serializer_class = SensorSerializer
 
+
+class DeviceView(viewsets.ModelViewSet):
+    queryset = Device.objects.all()
+    serializer_class = DeviceSerializer
+
+
 # def reportTemp(request, device_id):
 #     temp = request.Get['temp']
 #     today = date.today()
@@ -79,7 +85,18 @@ def expected_output(request, land_id):
     # land_id
     # response: {“d”:{“o”:“111”},“c”:null}
     # {"d":{"o":"1/0 1/0 1/0 spouts are on/off"}, "c":"error"}
-    return HttpResponse("")
+    lands = Land.objects.filter(id=land_id)
+    if lands.count() == 0:
+        return HttpResponse('Error, wrong land id')
+    land = lands.first()
+    spouts = land.spouts
+    print(repr(spouts))
+    spouts_conditions = ''
+    for spout in spouts.all():
+        spouts_conditions += '1' if spout.isOn is True else '0'
+    os = '{'
+    cs = '}'
+    return HttpResponse(f'{os}"d":{os}"o":"{spouts_conditions}"{cs},"c":null{cs}')
 
 
 def ask_schedule(request, land_id, program_id):
@@ -89,10 +106,20 @@ def ask_schedule(request, land_id, program_id):
     # {"d":{"e": "has continue", "l":"next_ip", "s":[{"id":"program_id","st": \
     # "per_weeK[2,1,0]:day_of_week[1-7]:hour:minute:hourly_duration:minute_duration" \
     # ,"o":"1/0 1/0 1/0 spouts are on/off"}, "c":"error"}
+    lands = Land.objects.filter(id=land_id)
+    if lands.count() == 0:
+        return HttpResponse('Error, wrong land id')
+    land = lands.first()
+    programs = land.programs.filter(id__gte=program_id)
+
+
     return HttpResponse("")
 
 
-def get_device_serial(request, device_id):
-    # device_id
-    # return device land id
-    return HttpResponse("")
+def get_land_id(request, device_serial):
+    devices = Device.objects.filter(serial=device_serial)
+    print("found device quantity " + str(devices.count()))
+    if devices.count() > 0:
+        print("device " + str(devices.first().land.id))
+        return HttpResponse(str(devices.first().land.id))
+    return HttpResponse('Error, unknown serial')
