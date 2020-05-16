@@ -8,6 +8,8 @@ from .serializers import CustomerSerializer, UserSerializer, LandSerializer,\
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from datetime import date
+from rest_framework.response import Response
+from rest_framework import status
 
 
 class CustomerView(viewsets.ModelViewSet):
@@ -48,6 +50,26 @@ class LandDailyTempRecordView(viewsets.ModelViewSet):
 class SensorView(viewsets.ModelViewSet):
     queryset = Sensor.objects.all()
     serializer_class = SensorSerializer
+
+    # def create(self, request, *args, **kwargs):
+    #     query_dict = request.data.copy()
+    #     #print(query_dict)
+    #     land_id = query_dict.get('land', None)
+    #     del query_dict['land']
+    #     #print(land_id)
+    #     land = Land.objects.get(id=land_id)
+    #     #print("###" + str(land_serializer))
+    #     print(str(land_id))
+    #     query_dict['land'] = land
+    #     print(query_dict)
+    #     serializer = SensorSerializer(data=query_dict)
+    #     #print(serializer)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # return super().create(request, *args, **kwargs)
 
 
 class DeviceView(viewsets.ModelViewSet):

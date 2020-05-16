@@ -19,13 +19,13 @@ class SimpleLandSerializer(serializers.ModelSerializer):
 
 
 class SensorSerializer(serializers.ModelSerializer):
-    land = SimpleLandSerializer(many=False, read_only=False)
+    #land = SimpleLandSerializer(many=False, read_only=False)
 
     class Meta:
         model = Sensor
         fields = ('id', 'type', 'value', 'land', 'modified', 'created', 'url')
         extra_kwargs = {'modified': {'read_only': True}}
-        depth = 1
+        #depth = 1
 
 
 class SpoutSerializer(serializers.HyperlinkedModelSerializer):

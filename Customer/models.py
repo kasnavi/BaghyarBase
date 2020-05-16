@@ -39,7 +39,7 @@ class Customer(models.Model):
 
 
 class Land(models.Model):
-    name = models.CharField('land name', max_length=100)
+    name = models.CharField('name', max_length=100)
     location = models.CharField('location', max_length=100)
     customers = models.ManyToManyField(Customer, related_name='lands')
 
