@@ -48,6 +48,10 @@ class LandDailyTempRecordView(viewsets.ModelViewSet):
 
 
 class SensorView(viewsets.ModelViewSet):
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        return super().create(request, *args, **kwargs)
+
     queryset = Sensor.objects.all()
     serializer_class = SensorSerializer
 
