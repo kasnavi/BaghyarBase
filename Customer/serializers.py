@@ -1,5 +1,5 @@
 from .models import Customer, Land, Spout, SpoutSensor, Program, LandDailyTempRecord, \
-    Sensor, Device
+    Sensor, Device, SmsReceiver
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.db import models
@@ -19,19 +19,27 @@ class SimpleLandSerializer(serializers.ModelSerializer):
 
 
 class SensorSerializer(serializers.ModelSerializer):
-    #land = SimpleLandSerializer(many=False, read_only=False)
+    # land = SimpleLandSerializer(many=False, read_only=False)
 
     class Meta:
         model = Sensor
         fields = ('id', 'type', 'value', 'land', 'modified', 'created', 'url')
         extra_kwargs = {'modified': {'read_only': True}}
-        #depth = 1
+        # depth = 1
+
+
+class SmsReceiverSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SmsReceiver
+        fields = ('id', 'number', 'spout', 'url')
 
 
 class SpoutSerializer(serializers.HyperlinkedModelSerializer):
+    sms_receivers = SmsReceiverSerializer(many=True)
+
     class Meta:
         model = Spout
-        fields = ('id', 'name', 'isOn', 'land', 'spoutSensor', 'url')
+        fields = ('id', 'name', 'isOn', 'land', 'spoutSensor', 'sms_receivers', 'url')
         depth = 1
 
 

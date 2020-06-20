@@ -13,6 +13,7 @@ router.register('program', views.ProgramView)
 router.register('landDailyTempRecord', views.LandDailyTempRecordView)
 router.register('sensor', views.SensorView)
 router.register('device', views.DeviceView)
+router.register('smsReceiver', views.SmsReceiverView)
 
 urlpatterns = [
     path('api/d/<int:land_id>/check/<int:land_program_id>/', views.check_land),

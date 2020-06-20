@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from .utils import send_sms
 
 
 class Log(models.Model):
@@ -86,6 +87,17 @@ class Spout(models.Model):
     def __str__(self):
         return "spout" + self.name + "_" + self.land.name
 
+    def save(self, *args, **kw):
+        sms_receivers = SmsReceiver.objects.all().filter(spout__id=self.id)
+        for sms_receiver in sms_receivers:
+            sms_receiver.notify(self.isOn)
+        return super().save(*args, **kw)
+        #for (smsReceiver : self.sms_receivers)
+        #if self.spout.isOn:
+        #    send_sms(self.number, "spout_on_notif", 'spout ' + self.name + ' is on')
+        #else:
+        #    send_sms(self.number, "spout_on_notif", 'spout ' + self.spout.name + ' is off')
+
 
 class SpoutSensor(models.Model):
     spout = models.OneToOneField(Spout, on_delete=models.CASCADE, related_name='spoutSensor')
@@ -129,3 +141,13 @@ class LandDailyTempRecord(models.Model):
 class Device(models.Model):
     serial = models.IntegerField()
     land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='device')
+
+
+class SmsReceiver(models.Model):
+    number = models.CharField(max_length=20)
+    spout = models.ForeignKey(Spout, on_delete=models.CASCADE, related_name='sms_receivers')
+
+    def notify(self, is_on):
+        send_sms(self.number, 'notify', 'spout ' + self.spout.name + ' is ' + ('on' if is_on else 'off'))
+
+

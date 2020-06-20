@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from .models import Customer, Land, Spout, SpoutSensor, Program, LandDailyTempRecord, \
-    Sensor, Device
+    Sensor, Device, SmsReceiver
 from .serializers import CustomerSerializer, UserSerializer, LandSerializer,\
     SpoutSerializer, SpoutSensorSerializer, ProgramSerializer,\
-    LandDailyTempRecordSerializer, SensorSerializer, DeviceSerializer
+    LandDailyTempRecordSerializer, SensorSerializer, DeviceSerializer, SmsReceiverSerializer
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from datetime import date
@@ -81,6 +81,11 @@ class DeviceView(viewsets.ModelViewSet):
     serializer_class = DeviceSerializer
 
 
+class SmsReceiverView(viewsets.ModelViewSet):
+    queryset = SmsReceiver.objects.all()
+    serializer_class = SmsReceiverSerializer
+
+
 # def reportTemp(request, device_id):
 #     temp = request.Get['temp']
 #     today = date.today()
@@ -115,6 +120,7 @@ def expected_output(request, land_id):
     if lands.count() == 0:
         return HttpResponse('Error, wrong land id')
     land = lands.first()
+    print(land.name)
     spouts = land.spouts
     print(repr(spouts))
     spouts_conditions = ''
