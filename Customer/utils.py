@@ -1,7 +1,7 @@
 from kavenegar import *
 import urllib.parse
 
-api_key = '7561424D583378446373356F6470474A363978533273515478796D4D4E76642F786B7258354663327043553D'
+api_key = ''
 
 
 def send_sms(to, template, context):
