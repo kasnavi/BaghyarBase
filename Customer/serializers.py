@@ -1,5 +1,5 @@
 from .models import Customer, Land, Spout, SpoutSensor, Program, LandDailyTempRecord, \
-    Sensor, Device, SmsReceiver
+    Sensor, SmsReceiver, TempSensor, SoilMoistureSensor, HumiditySensor
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from django.db import models
@@ -23,9 +23,32 @@ class SensorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Sensor
-        fields = ('id', 'type', 'value', 'land', 'modified', 'created', 'url')
+        fields = ('id', 'type', 'value', 'land', 'modified', 'created')
         extra_kwargs = {'modified': {'read_only': True}}
         # depth = 1
+
+
+class TempSensorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TempSensor
+        fields = ('id', 'temp_value', 'land', 'modified', 'created')
+        extra_kwargs = {'modified': {'read_only': True}, 'created': {'read_only': True}}
+
+
+class SoilMoistureSensorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SoilMoistureSensor
+        fields = ('id', 'soil_moisture_value', 'land', 'modified', 'created')
+        extra_kwargs = {'modified': {'read_only': True}}
+
+
+class HumiditySensorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HumiditySensor
+        fields = ('id', 'humidity_value', 'land', 'modified', 'created')
+        extra_kwargs = {'modified': {'read_only': True}}
 
 
 class SmsReceiverSerializer(serializers.ModelSerializer):
@@ -62,6 +85,7 @@ class LandSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id',
                   'name',
                   'location',
+                  'device',
                   'customers',
                   'spouts',
                   'sensors',
@@ -102,10 +126,10 @@ class LandDailyTempRecordSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'land', 'day', 'maxTemp', 'minTemp', 'url')
 
 
-class DeviceSerializer(serializers.HyperlinkedModelSerializer):
-    land = LandSerializer(many=False)
-
-    class Meta:
-        model = Device
-        fields = ('id', 'serial', 'land', 'url')
+# class DeviceSerializer(serializers.HyperlinkedModelSerializer):
+#     land = LandSerializer(many=False)
+#
+#     class Meta:
+#         model = Device
+#         fields = ('id', 'serial', 'land', 'url')
 

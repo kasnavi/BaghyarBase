@@ -43,6 +43,7 @@ class Land(models.Model):
     name = models.CharField('name', max_length=100)
     location = models.CharField('location', max_length=100)
     customers = models.ManyToManyField(Customer, related_name='lands')
+    device = models.OneToOneField(User, on_delete=models.SET_NULL, related_name='land', blank=True, null=True)
 
     def __str__(self):
         return self.name + "_" + self.location
@@ -51,11 +52,15 @@ class Land(models.Model):
 
 
 class Sensor(models.Model):
-    type = models.CharField('sensor_type', max_length=100, default='temp')
+
+    class Meta:
+        abstract = False
+
+    type = models.CharField('sensor_type', max_length=100, default='temp', blank=True)
     value = models.CharField('value', max_length=100, default=0)
-    land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='sensors')
-    created = models.DateTimeField(editable=False, default=timezone.now())
-    modified = models.DateTimeField(default=timezone.now())
+    land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='%(class)ss')
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField()
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -138,11 +143,6 @@ class LandDailyTempRecord(models.Model):
             + "maxTemp: " + str(self.maxTemp) + "minTemp: " + str(self.minTemp)
 
 
-class Device(models.Model):
-    serial = models.IntegerField()
-    land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='device')
-
-
 class SmsReceiver(models.Model):
     number = models.CharField(max_length=20)
     spout = models.ForeignKey(Spout, on_delete=models.CASCADE, related_name='sms_receivers')
@@ -151,3 +151,52 @@ class SmsReceiver(models.Model):
         send_sms(self.number, 'notify', 'spout ' + self.spout.name + ' is ' + ('on' if is_on else 'off'))
 
 
+class TempSensor(models.Model):
+
+    temp_value = models.CharField('temp_value', max_length=100, default=0)
+    land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='tempSensors')
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(TempSensor, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return "Temp Sensor " + self.temp_value + "_" + self.land.name
+
+
+class SoilMoistureSensor(models.Model):
+
+    soil_moisture_value = models.CharField('soil_moisture_value', max_length=100, default=0)
+    land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='soilMoistureSensors')
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(SoilMoistureSensor, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return "Soil Moisture Sensor " + self.soil_moisture_value + "_" + self.land.name
+
+
+class HumiditySensor(models.Model):
+
+    humidity_value = models.CharField('humidity_value', max_length=100, default=0)
+    land = models.ForeignKey(Land, on_delete=models.CASCADE, related_name='humiditySensors')
+    created = models.DateTimeField(editable=False)
+    modified = models.DateTimeField()
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created = timezone.now()
+        self.modified = timezone.now()
+        return super(HumiditySensor, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return "Humidity Sensor " + self.humidity_value + "_" + self.land.name
